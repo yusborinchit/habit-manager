@@ -2,6 +2,7 @@
 
 import { type User } from "next-auth";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
@@ -17,7 +18,7 @@ interface Props {
   user: User;
 }
 
-export default function SignOutButton({ user }: Readonly<Props>) {
+export default function ProfileButton({ user }: Readonly<Props>) {
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleSignOut() {
@@ -38,7 +39,12 @@ export default function SignOutButton({ user }: Readonly<Props>) {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/">Home</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/profile">Profile</Link>
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSignOut} disabled={isLoading}>
           Sign Out
         </DropdownMenuItem>
