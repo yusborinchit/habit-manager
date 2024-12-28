@@ -1,9 +1,11 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { insertHabit } from "~/actions/submit-habit";
+import { type z } from "zod";
+import { submitHabitAction } from "~/actions/submit-habit";
 import { Button } from "~/components/ui/button";
 import {
   Form,
@@ -38,6 +40,8 @@ const days = [
 ] as const;
 
 export function HabitForm() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<z.infer<typeof habitFormSchema>>({
     resolver: zodResolver(habitFormSchema),
     defaultValues: {
@@ -61,8 +65,10 @@ export function HabitForm() {
   });
 
   async function onSubmit(data: z.infer<typeof habitFormSchema>) {
-    const res = await insertHabit(data);
-    console.log(res);
+    setIsLoading(true);
+    await submitHabitAction(data);
+    setIsLoading(false);
+    form.reset();
   }
 
   return (
@@ -256,8 +262,9 @@ export function HabitForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="mt-4">
-              Track Habit
+            <Button disabled={isLoading} type="submit" className="mt-4">
+              {isLoading && <Loader className="animate-spin" />}
+              {isLoading ? "Submitting..." : "Track Habit"}
             </Button>
           </form>
         </Form>
