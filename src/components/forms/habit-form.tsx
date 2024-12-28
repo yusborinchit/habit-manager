@@ -72,7 +72,7 @@ export function HabitForm() {
   }
 
   return (
-    <Card className="mx-auto">
+    <Card className="mx-auto w-full">
       <CardHeader>
         <div>
           <p className="text-sm tracking-tighter text-muted-foreground">
