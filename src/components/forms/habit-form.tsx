@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { insertHabit } from "~/actions/submit-habit";
 import { Button } from "~/components/ui/button";
 import {
   Form,
@@ -14,6 +15,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { habitFormSchema } from "~/zod-schemas";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Checkbox } from "../ui/checkbox";
 import {
@@ -35,34 +37,9 @@ const days = [
   { id: "saturday", label: "Saturday" },
 ] as const;
 
-const formSchema = z.object({
-  title: z.string().min(1, {
-    message: "Title is required",
-  }),
-  description: z.string().max(255, {
-    message: "Description must be less than 255 characters",
-  }),
-  days: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: "You have to select at least one day of the week.",
-  }),
-  time: z.object({
-    hour: z
-      .string()
-      .refine((value) => Number(value) >= 1 && Number(value) <= 12, {
-        message: "Hour must be between 01 and 12",
-      }),
-    minute: z
-      .string()
-      .refine((value) => Number(value) >= 0 && Number(value) <= 59, {
-        message: "Minute must be between 00 and 59",
-      }),
-    mode: z.enum(["am", "pm"]),
-  }),
-});
-
 export function HabitForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof habitFormSchema>>({
+    resolver: zodResolver(habitFormSchema),
     defaultValues: {
       title: "",
       description: "",
@@ -83,8 +60,9 @@ export function HabitForm() {
     },
   });
 
-  async function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
+  async function onSubmit(data: z.infer<typeof habitFormSchema>) {
+    const res = await insertHabit(data);
+    console.log(res);
   }
 
   return (

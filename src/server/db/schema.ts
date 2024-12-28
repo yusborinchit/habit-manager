@@ -12,6 +12,26 @@ import { type AdapterAccount } from "next-auth/adapters";
 
 export const createTable = pgTableCreator((name) => `hm_${name}`);
 
+export const habits = createTable("habit", {
+  id: varchar("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar("user_id", { length: 255 })
+    .notNull()
+    .references(() => users.id),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  days: text("days").notNull(),
+  time: text("time").notNull(),
+});
+
+export const habitsRelations = relations(habits, ({ one }) => ({
+  user: one(users, { fields: [habits.userId], references: [users.id] }),
+}));
+
+// Auth Tables
+
 export const users = createTable("user", {
   id: varchar("id", { length: 255 })
     .notNull()
