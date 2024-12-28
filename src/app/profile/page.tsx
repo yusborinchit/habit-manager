@@ -9,11 +9,10 @@ import { getHabitsByUserId, getNextHabitByUserId } from "~/server/db/queries";
 export default async function ProfilePage() {
   const session = await auth();
 
-  const userHabits = await getHabitsByUserId(session!.user.id);
-  const nextUserHabit = await getNextHabitByUserId(
-    session!.user.id,
-    getCurrent24Time(),
-  );
+  const [userHabits, nextUserHabit] = await Promise.all([
+    getHabitsByUserId(session!.user.id),
+    getNextHabitByUserId(session!.user.id, getCurrent24Time()),
+  ]);
 
   return (
     <>
@@ -24,7 +23,9 @@ export default async function ProfilePage() {
             <span className="text-hm-500">#</span> Current Habit
           </h3>
           <pre className="whitespace-break-spaces">
-            {JSON.stringify(nextUserHabit, null, 2)}
+            {nextUserHabit
+              ? JSON.stringify(nextUserHabit, null, 2)
+              : "Nothing yet"}
           </pre>
         </section>
         <section className="flex flex-col gap-4">
@@ -33,14 +34,18 @@ export default async function ProfilePage() {
           </h3>
           <ScrollArea>
             <div className="flex gap-4">
-              {userHabits.map((habit) => (
-                <pre
-                  key={habit.id}
-                  className="min-w-fit whitespace-break-spaces"
-                >
-                  {JSON.stringify(habit, null, 2)}
-                </pre>
-              ))}
+              {userHabits.length > 0 ? (
+                userHabits.map((habit) => (
+                  <pre
+                    key={habit.id}
+                    className="min-w-fit whitespace-break-spaces"
+                  >
+                    {JSON.stringify(habit, null, 2)}
+                  </pre>
+                ))
+              ) : (
+                <pre>Nothing to track today!</pre>
+              )}
             </div>
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
