@@ -1,5 +1,6 @@
 "use client";
 
+import { Home, Loader, LogOut, User as UserIcon } from "lucide-react";
 import { type User } from "next-auth";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
@@ -40,13 +41,29 @@ export default function ProfileButton({ user }: Readonly<Props>) {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/">Home</Link>
+          <Link href="/">
+            <Home />
+            <span>Home</span>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/profile">Profile</Link>
+          <Link href="/profile">
+            <UserIcon />
+            <span>Profile</span>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSignOut} disabled={isLoading}>
-          Sign Out
+          {isLoading ? (
+            <>
+              <Loader className="animate-spin" />
+              <span>Loading...</span>
+            </>
+          ) : (
+            <>
+              <LogOut />
+              <span>Sign Out</span>
+            </>
+          )}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

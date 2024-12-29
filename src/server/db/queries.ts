@@ -10,6 +10,17 @@ export async function insertHabit(habit: typeof habits.$inferInsert) {
   return habitId;
 }
 
+export async function deleteHabit(
+  habitId: typeof habits.$inferSelect.id,
+  userId: typeof habits.$inferSelect.userId,
+) {
+  const [deletedHabitId] = await db
+    .delete(habits)
+    .where(and(eq(habits.id, habitId), eq(habits.userId, userId)))
+    .returning({ id: habits.id });
+  return deletedHabitId;
+}
+
 export async function getHabitsByUserId(userId: typeof habits.$inferSelect.id) {
   const userHabits = await db
     .select()

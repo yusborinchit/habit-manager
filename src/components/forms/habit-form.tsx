@@ -2,10 +2,11 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader } from "lucide-react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
-import { submitHabitAction } from "~/actions/submit-habit";
+import { insertHabitAction } from "~/actions/actions";
 import { Button } from "~/components/ui/button";
 import {
   Form,
@@ -40,7 +41,8 @@ const days = [
 ] as const;
 
 export function HabitForm() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof habitFormSchema>>({
     resolver: zodResolver(habitFormSchema),
@@ -65,10 +67,14 @@ export function HabitForm() {
   });
 
   async function onSubmit(data: z.infer<typeof habitFormSchema>) {
-    setIsLoading(true);
-    await submitHabitAction(data);
-    setIsLoading(false);
-    form.reset();
+    startTransition(async () => {
+      const { success } = await insertHabitAction(data);
+      if (success) {
+        router.refresh();
+      } else {
+        console.error("ERROR ON INSERT");
+      }
+    });
   }
 
   return (
@@ -262,9 +268,9 @@ export function HabitForm() {
                 </FormItem>
               )}
             />
-            <Button disabled={isLoading} type="submit" className="mt-4">
-              {isLoading && <Loader className="animate-spin" />}
-              {isLoading ? "Submitting..." : "Track Habit"}
+            <Button disabled={isPending} type="submit" className="mt-4">
+              {isPending && <Loader className="animate-spin" />}
+              {isPending ? "Submitting..." : "Track Habit"}
             </Button>
           </form>
         </Form>

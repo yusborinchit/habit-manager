@@ -1,4 +1,5 @@
 import { HabitForm } from "~/components/forms/habit-form";
+import HabitCard from "~/components/habit-card";
 import Header from "~/components/header";
 import MainContainer from "~/components/main-container";
 import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
@@ -22,7 +23,7 @@ export default async function ProfilePage() {
           <h3 className="text-2xl font-bold tracking-tighter">
             <span className="text-hm-500">#</span> Current Habit
           </h3>
-          <pre className="whitespace-break-spaces">
+          <pre className="whitespace-break-spaces px-4">
             {nextUserHabit
               ? JSON.stringify(nextUserHabit, null, 2)
               : "Nothing yet"}
@@ -36,12 +37,7 @@ export default async function ProfilePage() {
             <div className="flex gap-4">
               {userHabits.length > 0 ? (
                 userHabits.map((habit) => (
-                  <pre
-                    key={habit.id}
-                    className="min-w-fit whitespace-break-spaces"
-                  >
-                    {JSON.stringify(habit, null, 2)}
-                  </pre>
+                  <HabitCard key={habit.id} habit={habit} />
                 ))
               ) : (
                 <pre>Nothing to track today!</pre>
