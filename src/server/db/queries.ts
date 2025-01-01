@@ -10,6 +10,15 @@ export async function insertHabit(habit: typeof habits.$inferInsert) {
   return habitId;
 }
 
+export async function editHabit(id: string, habit: typeof habits.$inferInsert) {
+  const [habitId] = await db
+    .update(habits)
+    .set(habit)
+    .where(and(eq(habits.id, id), eq(habits.userId, habit.userId)))
+    .returning({ id: habits.id });
+  return habitId;
+}
+
 export async function deleteHabit(
   habitId: typeof habits.$inferSelect.id,
   userId: typeof habits.$inferSelect.userId,

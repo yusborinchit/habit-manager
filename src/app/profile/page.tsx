@@ -1,4 +1,4 @@
-import { HabitForm } from "~/components/forms/habit-form";
+import CreateHabitForm from "~/components/forms/create-habit-form";
 import HabitCard from "~/components/habit-card";
 import Header from "~/components/header";
 import MainContainer from "~/components/main-container";
@@ -46,7 +46,7 @@ export default async function ProfilePage() {
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
         </section>
-        <HabitForm />
+        <CreateHabitForm />
       </MainContainer>
       <footer className="mt-4"></footer>
     </>

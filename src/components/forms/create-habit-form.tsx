@@ -40,7 +40,7 @@ const days = [
   { id: "saturday", label: "Saturday" },
 ] as const;
 
-export function HabitForm() {
+export default function HabitForm() {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
